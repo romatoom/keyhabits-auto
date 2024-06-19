@@ -1,0 +1,44 @@
+table {
+  display: grid;
+  border-collapse: collapse;
+  width: fit-content;
+}
+
+table,
+th,
+td {
+  padding: 0;
+  border: 1px solid #888;
+}
+
+table td,
+table th {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px 8px;
+}
+
+table th > span {
+  display: block;
+}
+
+thead,
+tbody,
+tr {
+  display: contents;
+}
+
+table th {
+  position: relative;
+}
+
+table th > div.resizer {
+  position: absolute;
+  z-index: 999;
+  width: 6px;
+  height: 100%;
+  right: -3px;
+  cursor: col-resize;
+}
