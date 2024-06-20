@@ -5,6 +5,8 @@ import Phone from "#app/entities/Phone.js";
 import Shop from "#app/entities/Shop.js";
 import ShopCar from "#app/entities/ShopCar.js";
 
+await dbClient.recreateTables();
+
 async function saveData(_class, data) {
   promises = data.map((d) => new _class(d).save());
   return Promise.all(promises);

@@ -1,6 +1,7 @@
 import express from "express";
 import { PORT, API_URL } from "#app/constants.js";
 import fs from "fs";
+import dbClient from "#app/db/dbClient.js";
 
 const app = express();
 
@@ -21,7 +22,19 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/api/pivot-table", async (req, res) => {
-  const data = await fs.promises.readFile("./app/cars.json", "utf8");
+  const items = await dbClient.getPivotData();
+
+  const data = JSON.stringify({
+    items,
+    column_names_hashes: {
+      car_brand: "Марка",
+      car_model: "Модель",
+      price: "Цена",
+      shop_name: "Магазин",
+      shop_phones: "Номер телефона",
+    },
+  });
+
   res.writeHead(200, { "Content-Type": "application/json" });
   res.write(data);
   res.end();

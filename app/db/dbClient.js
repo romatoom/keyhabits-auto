@@ -42,10 +42,13 @@ class DatabaseClient {
     });
 
     await dbClientInstance.#initQueries();
-    await dbClientInstance.#dropTables();
-    await dbClientInstance.#createTables();
 
     return dbClientInstance;
+  }
+
+  async recreateTables() {
+    await this.#dropTables();
+    await this.#createTables();
   }
 
   async #initQueries() {
@@ -117,6 +120,11 @@ class DatabaseClient {
 
   async insert(tableName, values) {
     return this.#db.query(this.#queries.insert[tableName], values);
+  }
+
+  async getPivotData() {
+    const res = await this.#db.query(this.#queries.select.pivotData);
+    return res.rows;
   }
 
   async close() {
