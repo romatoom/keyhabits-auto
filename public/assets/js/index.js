@@ -17,20 +17,6 @@ const app = Vue.createApp({
 
   MIN_COLUMN_WIDTH: 150,
 
-  computed: {
-    /* columns() {
-      if (this.pivotTableData.length === 0) {
-        return [];
-      }
-
-      return Object.keys(this.pivotTableData[0]).map((key) => ({
-        name: key,
-        title: this.columnNamesHashes[key] || key,
-        width: 150,
-      }));
-    },*/
-  },
-
   watch: {
     columns: {
       handler() {
@@ -120,8 +106,6 @@ const app = Vue.createApp({
     document.removeEventListener("mousemove", this.mouseMove);
     document.removeEventListener("mouseup", this.mouseUp);
   },
-
-  // <th v-for="(column, index) in columns" :key="index" @mousemove="mouseMove" @mouseup="mouseUp">
 
   template: `
     <table ref="table">
