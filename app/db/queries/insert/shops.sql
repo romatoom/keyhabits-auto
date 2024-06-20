@@ -1,1 +1,1 @@
-INSERT INTO shops (name) VALUES ($1);
+INSERT INTO shops (name) VALUES ($1) RETURNING *;

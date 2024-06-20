@@ -115,41 +115,6 @@ class DatabaseClient {
     }
   }
 
-  async seed() {
-    /*console.log("Заполнение таблиц тестовыми данными");
-
-    try {
-      const files = await fs.readdir(`${currentPath}/sql/seeds`);
-
-      const queries = [];
-
-      for (const fileName of files) {
-        var tableName = path.basename(fileName, ".sql");
-
-        const sql = await fs.readFile(`${currentPath}/sql/seeds/${fileName}`, {
-          encoding: "utf8",
-        });
-
-        const rowJSON = await fs.readFile(
-          `${currentPath}/sql/seeds/${tableName}.json`,
-          {
-            encoding: "utf8",
-          }
-        );
-
-        const values = JSON.parse(rowJSON);
-
-        queries.push(this.#db.query(sql, values));
-      }
-
-      await Promise.all(queries);
-    } catch (err) {
-      console.error(err);
-      await this.close();
-      throw Error(`Ошибка при создании сидов для таблицы ${tableName}`);
-    }*/
-  }
-
   async insert(tableName, values) {
     return this.#db.query(this.#queries.insert[tableName], values);
   }

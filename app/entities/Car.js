@@ -1,16 +1,21 @@
 import dbClient from "#app/db/dbClient.js";
+import Entity from "./Entity.js";
 
-class Car {
+class Car extends Entity {
   #brand;
   #model;
 
   constructor({ brand, model }) {
+    super();
     this.#brand = brand;
     this.#model = model;
   }
 
   async save() {
-    return dbClient.insert("cars", [this.#brand, this.#model]);
+    const res = await dbClient.insert("cars", [this.#brand, this.#model]);
+    this._id = res.rows[0].id;
+    
+    return res;
   }
 }
 

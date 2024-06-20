@@ -5,114 +5,95 @@ import Phone from "#app/entities/Phone.js";
 import Shop from "#app/entities/Shop.js";
 import ShopCar from "#app/entities/ShopCar.js";
 
-// import { randIntMinMax } from "#app/utils/randomizer.js";
+async function saveData(_class, data) {
+  promises = data.map((d) => new _class(d).save());
+  return Promise.all(promises);
+}
 
+let promises;
+
+/***** cars *****/
 const carsData = [
-  ["Toyota", "Camry"],
-  ["Honda", "Civic"],
-  ["Ford", "Mustang"],
-  ["BMW", "3 Series"],
-  ["Nissan", "Altima"],
-  ["Chevrolet", "Silverado"],
-  ["Hyundai", "Sonata"],
-  ["Volkswagen", "Jetta"],
-  ["Subaru", "Outback"],
-  ["Kia", "Sorento"],
-  ["Mazda", "CX-5"],
-  ["Jeep", "Wrangler"],
-  ["Mercedes-Benz", "C-Class"],
-  ["Acura", "TLX"],
-  ["Audi", "A4"],
-  ["Lexus", "ES"],
-  ["Infiniti", "Q50"],
-  ["Cadillac", "XT5"],
-  ["Volvo", "XC90"],
-  ["Genesis", "G80"],
-  ["Porsche", "Cayenne"],
-  ["Tesla", "Model Y"],
-  ["Buick", "Enclave"],
-  ["GMC", "Sierra"],
-  ["Ram", "1500"],
-  ["Mitsubishi", "Outlander"],
-  ["Dodge", "Challenger"],
-  ["Fiat", "500"],
-  ["Land Rover", "Range Rover"],
+  { brand: "Toyota", model: "Camry" },
+  { brand: "Honda", model: "Civic" },
+  { brand: "Ford", model: "Mustang" },
+  { brand: "BMW", model: "3 Series" },
+  { brand: "Nissan", model: "Altima" },
+  { brand: "Chevrolet", model: "Silverado" },
+  { brand: "Hyundai", model: "Sonata" },
+  { brand: "Volkswagen", model: "Jetta" },
+  { brand: "Subaru", model: "Outback" },
+  { brand: "Kia", model: "Sorento" },
+  { brand: "Mazda", model: "CX-5" },
+  { brand: "Jeep", model: "Wrangler" },
+  { brand: "Mercedes-Benz", model: "C-Class" },
+  { brand: "Acura", model: "TLX" },
+  { brand: "Audi", model: "A4" },
+  { brand: "Lexus", model: "ES" },
+  { brand: "Infiniti", model: "Q50" },
+  { brand: "Cadillac", model: "XT5" },
+  { brand: "Volvo", model: "XC90" },
+  { brand: "Genesis", model: "G80" },
+  { brand: "Porsche", model: "Cayenne" },
+  { brand: "Tesla", model: "Model Y" },
+  { brand: "Buick", model: "Enclave" },
+  { brand: "GMC", model: "Sierra" },
+  { brand: "Ram", model: "1500" },
+  { brand: "Mitsubishi", model: "Outlander" },
+  { brand: "Dodge", model: "Challenger" },
+  { brand: "Fiat", model: "500" },
+  { brand: "Land Rover", model: "Range Rover" },
 ];
 
+await saveData(Car, carsData);
+
+/***** shops *****/
 const shopsData = [
-  ["Premium Auto"],
-  ["Speed Motors"],
-  ["Cartown"],
-  ["Wheels & Deals"],
-  ["Auto Empire"],
-  ["Ride Right"],
-  ["Velocity Cars"],
-  ["Auto Emporium"],
-  ["Cruiser Outlet"],
-  ["Automotive Legends"],
+  { name: "Premium Auto" },
+  { name: "Speed Motors" },
+  { name: "Cartown" },
+  { name: "Wheels & Deals" },
+  { name: "Auto Empire" },
+  { name: "Ride Right" },
+  { name: "Velocity Cars" },
+  { name: "Auto Emporium" },
+  { name: "Cruiser Outlet" },
+  { name: "Automotive Legends" },
 ];
 
+await saveData(Shop, shopsData);
+
+/***** phones *****/
 const phonesData = [
-  ["111-111-111", 1],
-  ["987-654-321", 1],
-  ["222-222-222", 2],
-  ["211-623-131", 2],
-  ["333-333-333", 3],
-  ["782-234-422", 3],
-  ["444-444-444", 4],
-  ["986-235-133", 4],
-  ["555-555-555", 5],
-  ["422-552-841", 5],
-  ["666-666-666", 6],
-  ["777-777-777", 7],
-  ["888-888-888", 8],
-  ["999-999-999", 9],
-  ["123-456-789", 10],
+  { number: "111-111-111", shop: 1 },
+  { number: "987-654-321", shop: 1 },
+  { number: "222-222-222", shop: 2 },
+  { number: "211-623-131", shop: 2 },
+  { number: "333-333-333", shop: 3 },
+  { number: "782-234-422", shop: 3 },
+  { number: "444-444-444", shop: 4 },
+  { number: "986-235-133", shop: 4 },
+  { number: "555-555-555", shop: 5 },
+  { number: "422-552-841", shop: 5 },
+  { number: "666-666-666", shop: 6 },
+  { number: "777-777-777", shop: 7 },
+  { number: "888-888-888", shop: 8 },
+  { number: "999-999-999", shop: 9 },
+  { number: "123-456-789", shop: 10 },
 ];
 
+await saveData(Phone, phonesData);
+
+/***** shops_cars *****/
 const shopsCarsData = [];
 
 for (let shop_id = 1; shop_id <= shopsData.length; shop_id++) {
   for (let car_id = 1; car_id <= carsData.length; car_id++) {
     const price = (car_id + shop_id) * 1000;
-    shopsCarsData.push([shop_id, car_id, price]);
+    shopsCarsData.push({ shop: shop_id, car: car_id, price });
   }
 }
 
-let promises;
-
-const cars = carsData.map((d) => new Car({ brand: d[0], model: d[1] }));
-promises = [];
-for (const car of cars) {
-  promises.push(car.save());
-}
-await Promise.all(promises);
-
-const shops = shopsData.map((d) => new Shop({ name: d[0] }));
-promises = [];
-for (const shop of shops) {
-  promises.push(shop.save());
-}
-await Promise.all(promises);
-
-const phones = phonesData.map((d) => {
-  return new Phone({ number: d[0], shop_id: d[1] });
-});
-
-promises = [];
-for (const phone of phones) {
-  promises.push(phone.save());
-}
-await Promise.all(promises);
-
-const shopsCars = shopsCarsData.map((d) => {
-  return new ShopCar({ shop_id: d[0], car_id: d[1], price: d[2] });
-});
-
-promises = [];
-for (const shopCar of shopsCars) {
-  promises.push(shopCar.save());
-}
-await Promise.all(promises);
+await saveData(ShopCar, shopsCarsData);
 
 await dbClient.close();
