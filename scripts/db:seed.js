@@ -7,13 +7,6 @@ import ShopCar from "#app/entities/ShopCar.js";
 
 await dbClient.recreateTables();
 
-async function saveData(_class, data) {
-  promises = data.map((d) => new _class(d).save());
-  return Promise.all(promises);
-}
-
-let promises;
-
 /***** cars *****/
 const carsData = [
   { brand: "Toyota", model: "Camry" },
@@ -99,3 +92,10 @@ for (let shop_id = 1; shop_id <= shopsData.length; shop_id++) {
 await saveData(ShopCar, shopsCarsData);
 
 await dbClient.close();
+
+/********/
+
+async function saveData(_class, data) {
+  const promises = data.map((d) => new _class(d).save());
+  return Promise.all(promises);
+}

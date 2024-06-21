@@ -15,7 +15,7 @@ const app = Vue.createApp({
     };
   },
 
-  MIN_COLUMN_WIDTH: 150,
+  MIN_COLUMN_WIDTH: 200,
 
   watch: {
     columns: {
@@ -63,7 +63,7 @@ const app = Vue.createApp({
       this.changedColumnData.downClientX = null;
     },
 
-    mouseUp(event) {
+    mouseUp() {
       this.resetIndexOfColumnChangable();
     },
 
@@ -88,6 +88,14 @@ const app = Vue.createApp({
           }
         });
       }
+    },
+
+    isPhonesColumn(columnName) {
+      return columnName === "shop_phones";
+    },
+
+    hrefForPhone(phoneNumber) {
+      return `tel:${phoneNumber}`;
     },
   },
 
@@ -120,8 +128,16 @@ const app = Vue.createApp({
 
       <tbody>
         <tr v-for="(carInfoItem, index) in pivotTableData" :key="index">
-          <td v-for="(carInfoKey, index) in Object.keys(carInfoItem)" :key="index">
-            {{ Array.isArray(carInfoItem[carInfoKey]) ? carInfoItem[carInfoKey].join(", ") : carInfoItem[carInfoKey] }}
+          <td v-for="(carInfoKey, index) in Object.keys(carInfoItem)" :key="index" :class="{phones: isPhonesColumn(carInfoKey)}">
+            <template v-if="isPhonesColumn(carInfoKey)">
+              <span v-for="(item, index) in carInfoItem[carInfoKey]" :key="index">
+                <a :href="hrefForPhone(item)">{{ item }}</a>
+              </span>
+            </template>
+
+            <span v-else>
+              {{ carInfoItem[carInfoKey] }}
+            </span>
           </td>
         </tr>
       </tbody>

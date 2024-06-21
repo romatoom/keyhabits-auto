@@ -2,43 +2,93 @@ table {
   display: grid;
   border-collapse: collapse;
   width: fit-content;
-}
+  font-size: 14px;
+  margin: 0;
+  padding: 5px;
+  border: 1px solid #fafafa;
+  border-radius: 6px;
+  color: #333;
 
-table,
-th,
-td {
-  padding: 0;
-  border: 1px solid #888;
-}
+  & thead,
+  & tbody {
+    display: contents;
+  }
 
-table td,
-table th {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 12px 8px;
-}
+  & tr {
+    display: contents;
 
-table th > span {
-  display: block;
-}
+    &:nth-child(2n) td {
+      background-color: #f7f7f7;
 
-thead,
-tbody,
-tr {
-  display: contents;
-}
+      &:first-child {
+        border-radius: 6px 0 0 6px;
+      }
 
-table th {
-  position: relative;
-}
+      &:last-child {
+        border-radius: 0 6px 6px 0;
+      }
+    }
+  }
 
-table th > div.resizer {
-  position: absolute;
-  z-index: 999;
-  width: 6px;
-  height: 100%;
-  right: -3px;
-  cursor: col-resize;
+  & th,
+  & td {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px 8px;
+    margin: 0;
+    border-left: 1px solid #fcfcfc;
+    border-right: 1px solid #fcfcfc;
+  }
+
+  & th {
+    position: relative;
+    background-color: #ddd;
+    /* color: #fff; */
+    font-weight: 500;
+
+    &:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+
+    &:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+
+    & > div.resizer {
+      position: absolute;
+      z-index: 999;
+      width: 6px;
+      height: 100%;
+      right: -4px;
+      cursor: col-resize;
+    }
+
+    & > span {
+      display: block;
+    }
+  }
+
+  & td {
+    &.phones {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    & a {
+      text-decoration: none;
+      border-bottom: 1px dashed #888;
+      color: #888;
+    }
+
+    &:first-child {
+      border-left: 0;
+    }
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
 }

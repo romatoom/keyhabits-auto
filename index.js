@@ -7,7 +7,7 @@ const app = express();
 
 app.use(express.static("public", { index: false }));
 
-app.get("/", async (req, res) => {
+app.get("/", async (_, res) => {
   let html = await fs.promises.readFile("./public/index.html", "utf8");
 
   // Прокидываем API_URL в html
@@ -21,17 +21,17 @@ app.get("/", async (req, res) => {
   res.end();
 });
 
-app.get("/api/pivot-table", async (req, res) => {
+app.get("/api/pivot-table", async (_, res) => {
   const items = await dbClient.getPivotData();
 
   const data = JSON.stringify({
     items,
     column_names_hashes: {
-      car_brand: "Марка",
-      car_model: "Модель",
+      car_brand: "Марка авто",
+      car_model: "Модель авто",
       price: "Цена",
-      shop_name: "Магазин",
-      shop_phones: "Номер телефона",
+      shop_name: "Название магазина",
+      shop_phones: "Номер телефона магазина",
     },
   });
 
