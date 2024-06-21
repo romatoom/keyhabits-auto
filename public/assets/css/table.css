@@ -9,6 +9,11 @@ table {
   border-radius: 6px;
   color: #333;
 
+  &.loading {
+    width: 500px;
+    height: 300px;
+  }
+
   & thead,
   & tbody {
     display: contents;
@@ -45,7 +50,6 @@ table {
   & th {
     position: relative;
     background-color: #ddd;
-    /* color: #fff; */
     font-weight: 500;
 
     &:first-child {
@@ -75,6 +79,14 @@ table {
       display: flex;
       flex-direction: column;
       gap: 5px;
+    }
+
+    &.empty-data {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
     }
 
     & a {

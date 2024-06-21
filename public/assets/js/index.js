@@ -4,7 +4,7 @@ const app = Vue.createApp({
   data() {
     return {
       pivotTableData: [],
-      columnNamesHashes: {},
+      loading: false,
       columns: [],
       changedColumnData: {
         index: -1,
@@ -15,34 +15,51 @@ const app = Vue.createApp({
     };
   },
 
-  MIN_COLUMN_WIDTH: 200,
+  computed: {
+    styleForEmptyDataElement() {
+      return `grid-column: 1 / ${this.columns.length + 1}`;
+    },
+  },
+
+  MIN_COLUMN_WIDTH: 150,
 
   watch: {
     columns: {
-      handler() {
-        if (!this.$refs.table) return;
+      async handler() {
+        await this.$nextTick();
+
+        if (!this.$refs.table) {
+          return;
+        }
 
         this.$refs.table.style.gridTemplateColumns = this.columns
           .map((column) => `${column.width}px`)
           .join(" ");
       },
       deep: true,
-      immediate: true,
     },
   },
 
   methods: {
-    initColumns() {
-      if (this.pivotTableData.length === 0) {
-        this.columns = [];
-        return;
-      }
+    async fetchData() {
+      this.loading = true;
 
-      this.columns = Object.keys(this.pivotTableData[0]).map((key) => ({
-        name: key,
-        title: this.columnNamesHashes[key] || key,
-        width: this.$options.MIN_COLUMN_WIDTH,
-      }));
+      try {
+        const response = await getPivotTable();
+
+        this.pivotTableData = response.data.items;
+
+        this.columns = Object.entries(response.data.column_titles).map(
+          ([columnName, columnTitle]) => ({
+            name: columnName,
+            title: columnTitle,
+            width: this.$options.MIN_COLUMN_WIDTH,
+          })
+        );
+      } catch (err) {
+      } finally {
+        this.loading = false;
+      }
     },
 
     mouseDown(event) {
@@ -100,12 +117,7 @@ const app = Vue.createApp({
   },
 
   async mounted() {
-    const response = await getPivotTable();
-    this.pivotTableData = response.data.items;
-    this.columnNamesHashes = response.data["column_names_hashes"];
-
-    this.initColumns();
-
+    await this.fetchData();
     document.addEventListener("mousemove", this.mouseMove);
     document.addEventListener("mouseup", this.mouseUp);
   },
@@ -116,7 +128,7 @@ const app = Vue.createApp({
   },
 
   template: `
-    <table ref="table">
+    <table v-if="!loading" ref="table">
       <thead>
         <tr>
           <th v-for="(column, index) in columns" :key="index">
@@ -127,21 +139,33 @@ const app = Vue.createApp({
       </thead>
 
       <tbody>
-        <tr v-for="(carInfoItem, index) in pivotTableData" :key="index">
-          <td v-for="(carInfoKey, index) in Object.keys(carInfoItem)" :key="index" :class="{phones: isPhonesColumn(carInfoKey)}">
-            <template v-if="isPhonesColumn(carInfoKey)">
-              <span v-for="(item, index) in carInfoItem[carInfoKey]" :key="index">
-                <a :href="hrefForPhone(item)">{{ item }}</a>
-              </span>
-            </template>
+        <template v-if="pivotTableData.length > 0">
+          <tr v-for="(carInfoItem, index) in pivotTableData" :key="index">
+            <td v-for="(carInfoKey, index) in Object.keys(carInfoItem)" :key="index" :class="{phones: isPhonesColumn(carInfoKey)}">
+              <template v-if="isPhonesColumn(carInfoKey)">
+                <span v-for="(item, index) in carInfoItem[carInfoKey]" :key="index">
+                  <a :href="hrefForPhone(item)">{{ item }}</a>
+                </span>
+              </template>
 
-            <span v-else>
-              {{ carInfoItem[carInfoKey] }}
-            </span>
+              <span v-else>
+                {{ carInfoItem[carInfoKey] }}
+              </span>
+            </td>
+          </tr>
+        </template>
+
+        <tr v-else>
+          <td :style="styleForEmptyDataElement" class="empty-data">
+              Нет данных
           </td>
         </tr>
       </tbody>
     </table>
+
+    <div v-else class="skeleton">
+      Загрузка...
+    </div>
   `,
 });
 

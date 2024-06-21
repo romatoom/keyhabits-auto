@@ -1,0 +1,18 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.skeleton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 700px;
+  padding: 100px 0;
+
+  background-color: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}

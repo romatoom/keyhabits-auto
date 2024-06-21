@@ -26,7 +26,7 @@ app.get("/api/pivot-table", async (_, res) => {
 
   const data = JSON.stringify({
     items,
-    column_names_hashes: {
+    column_titles: {
       car_brand: "Марка авто",
       car_model: "Модель авто",
       price: "Цена",
