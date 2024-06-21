@@ -1,9 +1,8 @@
 import fs from "node:fs/promises";
+import path from "path";
+import getCurrentPath from "#app/utils/getCurrentPath.js";
 
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
-
-const currentPath = dirname(fileURLToPath(import.meta.url));
+const queriesFolderPath = `${getCurrentPath(import.meta.url)}/queries`;
 
 import {
   PG_USER as user,
@@ -46,33 +45,28 @@ class DatabaseClient {
     return dbClientInstance;
   }
 
-  async recreateTables() {
-    await this.#dropTables();
-    await this.#createTables();
-  }
-
   async #initQueries() {
     this.#queries = {};
 
     try {
       const folders = (
-        await fs.readdir(`${currentPath}/queries`, {
+        await fs.readdir(queriesFolderPath, {
           withFileTypes: true,
         })
       )
         .filter((f) => f.isDirectory())
         .map((f) => f.name);
 
-      for (const folder of folders) {
-        this.#queries[folder] = {};
+      for (const folderName of folders) {
+        this.#queries[folderName] = {};
 
-        const files = await fs.readdir(`${currentPath}/queries/${folder}`);
+        const files = await fs.readdir(`${queriesFolderPath}/${folderName}`);
 
         for (const file of files) {
           var tableName = path.basename(file, ".sql");
 
-          this.#queries[folder][tableName] = await fs.readFile(
-            `${currentPath}/queries/${folder}/${file}`,
+          this.#queries[folderName][tableName] = await fs.readFile(
+            `${queriesFolderPath}/${folderName}/${file}`,
             {
               encoding: "utf8",
             }
@@ -86,9 +80,7 @@ class DatabaseClient {
     }
   }
 
-  async #createTables() {
-    console.log("Создание таблиц");
-
+  async createTables() {
     const tableCreationOrder = ["cars", "shops", "phones", "shops_cars"];
 
     try {
@@ -102,9 +94,7 @@ class DatabaseClient {
     }
   }
 
-  async #dropTables() {
-    console.log("Удаление таблиц");
-
+  async dropTables() {
     const tableDropOrder = ["shops_cars", "phones", "cars", "shops"];
 
     try {

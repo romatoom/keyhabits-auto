@@ -1,15 +1,15 @@
 import dbClient from "#app/db/dbClient.js";
-import Entity from "./Entity.js";
+import Model from "./Model.js";
 
-class ShopCar extends Entity {
+class ShopCar extends Model {
   #shop_id;
   #car_id;
   #price;
 
   constructor({ shop, car, price }) {
     super();
-    this.#shop_id = Entity.entityId(shop);
-    this.#car_id = Entity.entityId(car);
+    this.#shop_id = Model.entityId(shop);
+    this.#car_id = Model.entityId(car);
     this.#price = price;
   }
 

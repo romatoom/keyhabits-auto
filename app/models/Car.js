@@ -1,7 +1,7 @@
 import dbClient from "#app/db/dbClient.js";
-import Entity from "./Entity.js";
+import Model from "./Model.js";
 
-class Car extends Entity {
+class Car extends Model {
   #brand;
   #model;
 
@@ -14,7 +14,7 @@ class Car extends Entity {
   async save() {
     const res = await dbClient.insert("cars", [this.#brand, this.#model]);
     this._id = res.rows[0].id;
-    
+
     return res;
   }
 }

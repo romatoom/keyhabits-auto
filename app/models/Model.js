@@ -1,4 +1,4 @@
-class Entity {
+class Model {
   _id;
 
   constructor() {
@@ -9,9 +9,9 @@ class Entity {
     return this._id;
   }
 
-  static entityId(entityOrId) {
+  static modelId(entityOrId) {
     return typeof entityOrId === "number" ? entityOrId : entityOrId.id;
   }
 }
 
-export default Entity;
+export default Model;

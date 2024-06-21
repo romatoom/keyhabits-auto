@@ -1,7 +1,7 @@
 import dbClient from "#app/db/dbClient.js";
-import Entity from "./Entity.js";
+import Model from "./Model.js";
 
-class Shop extends Entity {
+class Shop extends Model {
   #name;
 
   constructor({ name }) {

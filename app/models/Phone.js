@@ -1,14 +1,14 @@
 import dbClient from "#app/db/dbClient.js";
-import Entity from "./Entity.js";
+import Model from "./Model.js";
 
-class Phone extends Entity {
+class Phone extends Model {
   #number;
   #shop_id;
 
   constructor({ number, shop }) {
     super();
     this.#number = number;
-    this.#shop_id = Entity.entityId(shop);
+    this.#shop_id = Model.entityId(shop);
   }
 
   async save() {

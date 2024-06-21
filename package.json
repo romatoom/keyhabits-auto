@@ -12,7 +12,10 @@
   },
   "type": "module",
   "scripts": {
-    "db:seed": "node scripts/db:seed.js",
+    "db:setup": "node scripts/db/setup.js",
+    "db:create": "node scripts/db/create.js",
+    "db:seed": "node scripts/db/seed.js",
+    "db:drop": "node scripts/db/drop.js",
     "start": "node index.js"
   },
   "imports": {
