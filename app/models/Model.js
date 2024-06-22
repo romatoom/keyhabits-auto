@@ -9,7 +9,7 @@ class Model {
     return this._id;
   }
 
-  static modelId(entityOrId) {
+  static entityId(entityOrId) {
     return typeof entityOrId === "number" ? entityOrId : entityOrId.id;
   }
 }

@@ -112,8 +112,12 @@ class DatabaseClient {
     return this.#db.query(this.#queries.insert[tableName], values);
   }
 
-  async getPivotData() {
-    const res = await this.#db.query(this.#queries.select.pivotData);
+  get queries() {
+    return this.#queries;
+  }
+
+  async execQuery(...args) {
+    const res = await this.#db.query(...args);
     return res.rows;
   }
 

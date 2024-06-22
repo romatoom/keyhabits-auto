@@ -1,10 +1,10 @@
-import dbClient from "#app/db/dbClient.js";
+import ShopCar from "#app/models/ShopCar.js";
 
-async function getPivotData(_, res) {
+async function getPivotTable(_, res) {
   let items = [];
 
   try {
-    items = await dbClient.getPivotData();
+    items = await ShopCar.getPivotData();
   } catch (err) {}
 
   const data = JSON.stringify({
@@ -23,4 +23,4 @@ async function getPivotData(_, res) {
   res.end();
 }
 
-export { getPivotData };
+export { getPivotTable };

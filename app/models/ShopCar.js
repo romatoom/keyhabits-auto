@@ -24,6 +24,10 @@ class ShopCar extends Model {
 
     return res;
   }
+
+  static async getPivotData() {
+    return dbClient.execQuery(dbClient.queries.select.pivotData);
+  }
 }
 
 export default ShopCar;

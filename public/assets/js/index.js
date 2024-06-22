@@ -1,4 +1,4 @@
-import { getPivotTable } from "./api.js";
+import { getShopsCarsTable } from "./api.js";
 
 const app = Vue.createApp({
   data() {
@@ -45,7 +45,7 @@ const app = Vue.createApp({
       this.loading = true;
 
       try {
-        const response = await getPivotTable();
+        const response = await getShopsCarsTable();
 
         this.pivotTableData = response.data.items;
 
