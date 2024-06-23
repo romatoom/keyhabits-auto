@@ -21,6 +21,8 @@ class DatabaseClient {
   #queries;
   #tablesFieldsOrders = {};
 
+  static #tableCreationOrder = ["cars", "shops", "phones", "shops_cars"];
+
   constructor({ user, host, database, password, port }) {
     this.#db = new Client({
       user,
@@ -106,10 +108,8 @@ class DatabaseClient {
   }
 
   async createTables() {
-    const tableCreationOrder = ["cars", "shops", "phones", "shops_cars"];
-
     try {
-      for (var tableName of tableCreationOrder) {
+      for (var tableName of DatabaseClient.#tableCreationOrder) {
         await this.#db.query(this.#queries.createTable[tableName]);
       }
     } catch (err) {
@@ -120,10 +120,8 @@ class DatabaseClient {
   }
 
   async dropTables() {
-    const tableDropOrder = ["shops_cars", "phones", "cars", "shops"];
-
     try {
-      for (var tableName of tableDropOrder) {
+      for (var tableName of DatabaseClient.#tableCreationOrder.reverse()) {
         await this.#db.query(this.#queries.dropTable[tableName]);
       }
     } catch (err) {
