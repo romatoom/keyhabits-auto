@@ -22,7 +22,7 @@ class ShopCar extends Model {
 
     this._id = res.rows[0].id;
 
-    return res;
+    return res.rows[0];
   }
 
   static async getPivotData() {

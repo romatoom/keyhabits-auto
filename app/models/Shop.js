@@ -13,7 +13,7 @@ class Shop extends Model {
     const res = await dbClient.insert("shops", [this.#name]);
     this._id = res.rows[0].id;
 
-    return res;
+    return res.rows[0];
   }
 }
 

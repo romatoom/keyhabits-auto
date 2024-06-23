@@ -15,7 +15,7 @@ class Car extends Model {
     const res = await dbClient.insert("cars", [this.#brand, this.#model]);
     this._id = res.rows[0].id;
 
-    return res;
+    return res.rows[0];
   }
 }
 

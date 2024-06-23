@@ -47,7 +47,7 @@ async function seed() {
     { brand: "Land Rover", model: "Range Rover" },
   ];
 
-  await saveData(Car, carsData);
+  const cars = await saveData(Car, carsData);
 
   /***** shops *****/
   const shopsData = [
@@ -63,10 +63,10 @@ async function seed() {
     { name: "Automotive Legends" },
   ];
 
-  await saveData(Shop, shopsData);
+  const shops = await saveData(Shop, shopsData);
 
   /***** phones *****/
-  const phonesData = [
+  let phonesData = [
     { number: "111-111-111", shop: 1 },
     { number: "987-654-321", shop: 1 },
     { number: "222-222-222", shop: 2 },
@@ -82,17 +82,20 @@ async function seed() {
     { number: "888-888-888", shop: 8 },
     { number: "999-999-999", shop: 9 },
     { number: "123-456-789", shop: 10 },
-  ];
+  ].map((phonesDataItem, index) => ({
+    ...phonesDataItem,
+    shop: shops[index % shops.length],
+  }));
 
   await saveData(Phone, phonesData);
 
   /***** shops_cars *****/
   const shopsCarsData = [];
 
-  for (let shop_id = 1; shop_id <= shopsData.length; shop_id++) {
-    for (let car_id = 1; car_id <= carsData.length; car_id++) {
-      const price = (car_id + shop_id) * 1000;
-      shopsCarsData.push({ shop: shop_id, car: car_id, price });
+  for (const shop of shops) {
+    for (const car of cars) {
+      const price = (car.id + shop.id) * 1000;
+      shopsCarsData.push({ shop, car, price });
     }
   }
 

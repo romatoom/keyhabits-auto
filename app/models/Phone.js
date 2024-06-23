@@ -15,7 +15,7 @@ class Phone extends Model {
     const res = await dbClient.insert("phones", [this.#number, this.#shop_id]);
     this._id = res.rows[0].id;
 
-    return res;
+    return res.rows[0];
   }
 }
 
