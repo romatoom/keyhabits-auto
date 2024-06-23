@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "path";
 import getCurrentPath from "#app/utils/getCurrentPath.js";
+import Model from "#app/models/Model.js";
 
 const queriesFolderPath = `${getCurrentPath(import.meta.url)}/queries`;
 
@@ -18,6 +19,7 @@ const { Client } = pkg;
 class DatabaseClient {
   #db;
   #queries;
+  #tablesFieldsOrders = {};
 
   constructor({ user, host, database, password, port }) {
     this.#db = new Client({
@@ -41,6 +43,7 @@ class DatabaseClient {
     });
 
     await dbClientInstance.#initQueries();
+    dbClientInstance.#initTablesFieldsOrders();
 
     return dbClientInstance;
   }
@@ -80,6 +83,28 @@ class DatabaseClient {
     }
   }
 
+  get queries() {
+    return this.#queries;
+  }
+
+  #initTablesFieldsOrders() {
+    const regex = /\(([^)]+)\)/;
+
+    for (const tableName in this.#queries.insert) {
+      const sql = this.#queries.insert[tableName];
+
+      const match = regex.exec(sql);
+
+      this.#tablesFieldsOrders[tableName] = match[1]
+        .split(",")
+        .map((field) => field.trim());
+    }
+  }
+
+  get tablesFieldsOrders() {
+    return this.#tablesFieldsOrders;
+  }
+
   async createTables() {
     const tableCreationOrder = ["cars", "shops", "phones", "shops_cars"];
 
@@ -108,12 +133,16 @@ class DatabaseClient {
     }
   }
 
-  async insert(tableName, values) {
-    return this.#db.query(this.#queries.insert[tableName], values);
-  }
+  async insert(tableName, attributes) {
+    const fieldsOrder = this.tablesFieldsOrders[tableName];
 
-  get queries() {
-    return this.#queries;
+    const insertedValues = fieldsOrder.map((field) => {
+      return field.endsWith("_id")
+        ? Model.entityId(attributes[field.replace("_id", "")])
+        : attributes[field];
+    });
+
+    return this.#db.query(this.#queries.insert[tableName], insertedValues);
   }
 
   async execQuery(...args) {
