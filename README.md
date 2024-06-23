@@ -1,3 +1,5 @@
+<img width="894" alt="screenshot" src="https://github.com/romatoom/keyhabits-auto/assets/20795373/f1540ee7-5918-4d16-a551-3ef9a2a89436">
+
 Предварительная подготовка: на машине должна быть установлена PostgreSQL.
 Создать БД для работы приложения. В примере создаётся БД с именем cars
 
