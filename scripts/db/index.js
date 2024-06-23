@@ -5,16 +5,19 @@ import Phone from "#app/models/Phone.js";
 import Shop from "#app/models/Shop.js";
 import ShopCar from "#app/models/ShopCar.js";
 
+// Создание таблиц
 async function create() {
   return dbClient.createTables();
 }
 
+// Удаление таблиц
 async function drop() {
   return dbClient.dropTables();
 }
 
+// Заполнение таблиц фейковыми данными
 async function seed() {
-  /***** cars *****/
+  /***** Таблица cars *****/
   const carsData = [
     { brand: "Toyota", model: "Camry" },
     { brand: "Honda", model: "Civic" },
@@ -49,7 +52,7 @@ async function seed() {
 
   const cars = await saveData(Car, carsData);
 
-  /***** shops *****/
+  /***** Таблица shops *****/
   const shopsData = [
     { name: "Premium Auto" },
     { name: "Speed Motors" },
@@ -65,23 +68,23 @@ async function seed() {
 
   const shops = await saveData(Shop, shopsData);
 
-  /***** phones *****/
+  /***** Таблица phones *****/
   let phonesData = [
-    { number: "111-111-111", shop: 1 },
-    { number: "987-654-321", shop: 1 },
-    { number: "222-222-222", shop: 2 },
-    { number: "211-623-131", shop: 2 },
-    { number: "333-333-333", shop: 3 },
-    { number: "782-234-422", shop: 3 },
-    { number: "444-444-444", shop: 4 },
-    { number: "986-235-133", shop: 4 },
-    { number: "555-555-555", shop: 5 },
-    { number: "422-552-841", shop: 5 },
-    { number: "666-666-666", shop: 6 },
-    { number: "777-777-777", shop: 7 },
-    { number: "888-888-888", shop: 8 },
-    { number: "999-999-999", shop: 9 },
-    { number: "123-456-789", shop: 10 },
+    { number: "111-111-111" },
+    { number: "987-654-321" },
+    { number: "222-222-222" },
+    { number: "211-623-131" },
+    { number: "333-333-333" },
+    { number: "782-234-422" },
+    { number: "444-444-444" },
+    { number: "986-235-133" },
+    { number: "555-555-555" },
+    { number: "422-552-841" },
+    { number: "666-666-666" },
+    { number: "777-777-777" },
+    { number: "888-888-888" },
+    { number: "999-999-999" },
+    { number: "123-456-789" },
   ].map((phonesDataItem, index) => ({
     ...phonesDataItem,
     shop: shops[index % shops.length],
@@ -89,7 +92,7 @@ async function seed() {
 
   await saveData(Phone, phonesData);
 
-  /***** shops_cars *****/
+  /***** Таблица shops_cars *****/
   const shopsCarsData = [];
 
   for (const shop of shops) {
@@ -101,8 +104,7 @@ async function seed() {
 
   await saveData(ShopCar, shopsCarsData);
 
-  /********/
-
+  // Асинхронное сохранение данных в БД
   async function saveData(_class, data) {
     const promises = data.map((d) => new _class(d).save());
     return Promise.all(promises);

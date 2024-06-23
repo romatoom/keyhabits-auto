@@ -1,3 +1,5 @@
+// Модель для таблицы автомобилей
+
 import Model from "./Model.js";
 
 class Car extends Model {

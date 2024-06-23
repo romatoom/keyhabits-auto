@@ -1,3 +1,5 @@
+// Модель для таблицы о автомобилях в магазинах (а также цене)
+
 import dbClient from "#app/db/dbClient.js";
 import Model from "./Model.js";
 

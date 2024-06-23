@@ -1,3 +1,5 @@
+// Родительский класс для остальных моделей
+
 import dbClient from "#app/db/dbClient.js";
 
 class Model {
@@ -13,10 +15,12 @@ class Model {
     return this._id;
   }
 
+  // Если передан id, возвращаем его, иначе атрибут id модели
   static entityId(entityOrId) {
     return typeof entityOrId === "number" ? entityOrId : entityOrId.id;
   }
 
+  // Сохранение модели в БД
   async save() {
     const res = await dbClient.insert(
       this.constructor.tableName,

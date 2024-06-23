@@ -6,24 +6,28 @@ const app = Vue.createApp({
       pivotTableData: [],
       loading: false,
       columns: [],
+      // Данные для обработки событий по изменению ширины колонки
       changedColumnData: {
-        index: -1,
-        downClientX: null,
-        oldWidth: null,
-        needForRAF: true,
+        index: -1, // индекс колонки
+        downClientX: null, // X-координата колонки
+        oldWidth: null, // ширина колонки до начала её изменения
+        needForRAF: true, // необходим ли вызов функции request animation frame
       },
     };
   },
 
   computed: {
+    // Возвращает стиль для объединения ячеек при отображении таблицы с пустыми данными
     styleForEmptyDataElement() {
       return `grid-column: 1 / ${this.columns.length + 1}`;
     },
   },
 
+  // Минимальная ширина столбов по умолчанию
   MIN_COLUMN_WIDTH: 150,
 
   watch: {
+    // При изменении свойства, отвечающего за ширину колонок меняем обновляем стили таблицы для применения эффекта
     columns: {
       async handler() {
         await this.$nextTick();
@@ -47,8 +51,10 @@ const app = Vue.createApp({
       try {
         const response = await getShopsCarsTable();
 
+        // Данные таблицы
         this.pivotTableData = response.data.items;
 
+        // Свойства колонок
         this.columns = Object.entries(response.data.column_titles).map(
           ([columnName, columnTitle]) => ({
             name: columnName,
@@ -63,25 +69,27 @@ const app = Vue.createApp({
     },
 
     mouseDown(event) {
+      // имя колонки, на которой было событие нажатия мыши
       const columnName = event.target.dataset.columnName;
 
+      // устанавливаем X-координату, в которой произошло нажатие
       this.changedColumnData.downClientX = event.clientX;
 
+      // Индекс колонки
       this.changedColumnData.index = this.columns.findIndex(
         (column) => column.name === columnName
       );
 
+      // Первоначальная ширина колонки (до того, как начали менять её ширину)
       this.changedColumnData.oldWidth =
         this.columns[this.changedColumnData.index].width;
     },
 
-    resetIndexOfColumnChangable() {
+    mouseUp() {
+      // сбрасываем данные
       this.changedColumnData.index = -1;
       this.changedColumnData.downClientX = null;
-    },
-
-    mouseUp() {
-      this.resetIndexOfColumnChangable();
+      console.log(this.count1, this.count2);
     },
 
     mouseMove(event) {
@@ -92,14 +100,18 @@ const app = Vue.createApp({
       ) {
         this.changedColumnData.needForRAF = false;
 
+        // используем для оптимизации анимации
         requestAnimationFrame(() => {
           this.changedColumnData.needForRAF = true;
           if (!this.changedColumnData.downClientX) return;
 
+          // Определяем разницу, на сколько изменилась ширина колонки
           const diffX = event.clientX - this.changedColumnData.downClientX;
 
+          // Новое значение ширины на данном шаге анимации
           const newWidth = this.changedColumnData.oldWidth + diffX;
 
+          // Если ширина не меньше минимально допустимой, устанавливаем её
           if (newWidth >= this.$options.MIN_COLUMN_WIDTH) {
             this.columns[this.changedColumnData.index].width = newWidth;
           }

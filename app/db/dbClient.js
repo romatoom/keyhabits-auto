@@ -3,6 +3,7 @@ import path from "path";
 import getCurrentPath from "#app/utils/getCurrentPath.js";
 import Model from "#app/models/Model.js";
 
+// путь до папки, в которой хранятся тексты запросов к БД
 const queriesFolderPath = `${getCurrentPath(import.meta.url)}/queries`;
 
 import {
@@ -17,10 +18,16 @@ import pkg from "pg";
 const { Client } = pkg;
 
 class DatabaseClient {
+  // инстанс клиента для работы с БД
   #db;
+
+  // здесь хранятся тексты sql-запросов
   #queries;
+
+  // определяет порядок полей для каждой из таблиц (используется для вставки данных в БД)
   #tablesFieldsOrders = {};
 
+  // Порядок создания таблиц
   static #tableCreationOrder = ["cars", "shops", "phones", "shops_cars"];
 
   constructor({ user, host, database, password, port }) {
@@ -35,6 +42,7 @@ class DatabaseClient {
     this.#db.connect();
   }
 
+  // Функция для создания и настройки инстанса DatabaseClient
   static async init({ user, host, database, password, port }) {
     const dbClientInstance = new DatabaseClient({
       user,
@@ -44,16 +52,21 @@ class DatabaseClient {
       port,
     });
 
+    // формируем объект, хранящий тексты запросов к БД
     await dbClientInstance.#initQueries();
+
+    // Определяем порядок полей для таблиц (на основе порядка полей в INSERT запросах)
     dbClientInstance.#initTablesFieldsOrders();
 
     return dbClientInstance;
   }
 
+  // Инициализируем объект, хранящий тексты sql-запросов
   async #initQueries() {
     this.#queries = {};
 
     try {
+      // подпапки в папке с запросами
       const folders = (
         await fs.readdir(queriesFolderPath, {
           withFileTypes: true,
@@ -62,6 +75,7 @@ class DatabaseClient {
         .filter((f) => f.isDirectory())
         .map((f) => f.name);
 
+      // заполняем объект для хранения запросов
       for (const folderName of folders) {
         this.#queries[folderName] = {};
 
@@ -89,14 +103,18 @@ class DatabaseClient {
     return this.#queries;
   }
 
+  // Инициализируем объект, хранящий порядок полей для вставки данных для каждой из таблиц
   #initTablesFieldsOrders() {
     const regex = /\(([^)]+)\)/;
 
+    // С помощью цикла проходим по всем sql запросам для вставки данных
     for (const tableName in this.#queries.insert) {
       const sql = this.#queries.insert[tableName];
 
+      // Находим содержимое первых скобок (там содержатся поля для вставки в нужном порядке)
       const match = regex.exec(sql);
 
+      // Сохраняем порядок полей для каждой таблицы
       this.#tablesFieldsOrders[tableName] = match[1]
         .split(",")
         .map((field) => field.trim());
@@ -107,8 +125,10 @@ class DatabaseClient {
     return this.#tablesFieldsOrders;
   }
 
+  // Создание таблиц в БД
   async createTables() {
     try {
+      // Выполняем запросы по созданию таблиц в нужном порядке
       for (var tableName of DatabaseClient.#tableCreationOrder) {
         await this.#db.query(this.#queries.createTable[tableName]);
       }
@@ -119,8 +139,10 @@ class DatabaseClient {
     }
   }
 
+  // Создание таблиц из БД
   async dropTables() {
     try {
+      // Выполняем запросы по удалению таблиц в порядке, обратном их созданию
       for (var tableName of DatabaseClient.#tableCreationOrder.reverse()) {
         await this.#db.query(this.#queries.dropTable[tableName]);
       }
@@ -131,9 +153,13 @@ class DatabaseClient {
     }
   }
 
+  // Вставка данных в таблицу
   async insert(tableName, attributes) {
     const fieldsOrder = this.tablesFieldsOrders[tableName];
 
+    // Формируем из объекта атрибутов массив данных для вставки, исходя из порядка полей
+    // Если поле хранит ссылку на id из другой таблицы (имеет окончание _id),
+    // то вместо самого аттрибута используем его id (с помощью Model.entityId)
     const insertedValues = fieldsOrder.map((field) => {
       return field.endsWith("_id")
         ? Model.entityId(attributes[field.replace("_id", "")])
@@ -143,6 +169,7 @@ class DatabaseClient {
     return this.#db.query(this.#queries.insert[tableName], insertedValues);
   }
 
+  // Возможность выполнения произвользого запроса к БД
   async execQuery(...args) {
     const res = await this.#db.query(...args);
     return res.rows;

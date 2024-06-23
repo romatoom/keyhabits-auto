@@ -6,6 +6,7 @@ import getCurrentPath from "#app/utils/getCurrentPath.js";
 
 const router = express.Router();
 
+// Роутер, возвращающий страницу, на которой монтируется Vue приложение
 router.get("/", async (_, res) => {
   let html = await fs.promises.readFile(
     resolve(getCurrentPath(import.meta.url), "../../public/index.html"),
