@@ -89,7 +89,6 @@ const app = Vue.createApp({
       // сбрасываем данные
       this.changedColumnData.index = -1;
       this.changedColumnData.downClientX = null;
-      console.log(this.count1, this.count2);
     },
 
     mouseMove(event) {
